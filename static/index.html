@@ -69,7 +69,7 @@ submitBtn.addEventListener('click', async () => {
   if (fileInput.files.length > 0) form.append('file', fileInput.files[0]);
 
   try {
-    const res = await fetch('/analyze', { method: 'POST', body: form });
+    const res = await fetch('https://autou-test.onrender.com/analyze', { method: 'POST', body: form });
     if (!res.ok) throw new Error('Erro na requisição');
     const data = await res.json();
     categoryEl.innerText = data.category;

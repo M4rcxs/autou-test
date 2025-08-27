@@ -21,7 +21,7 @@ STOP_EN = set(stopwords.words('english'))
 stem_pt = SnowballStemmer('portuguese')
 stem_en = SnowballStemmer('english')
 
-PRODUCTIVE_KEYWORDS_PT_STEM = {
+PRODUCTIVE_KEYWORDS_PT = {
     "solicit", "pedid", "requer", "necessit",
     "erro", "falh", "bug", "problem",
     "suport", "atend", "ajud", "auxil",
@@ -32,7 +32,7 @@ PRODUCTIVE_KEYWORDS_PT_STEM = {
     "dúvid", "pergunt", "quest"
 }
 
-UNPRODUCTIVE_KEYWORDS_PT_STEM = {
+UNPRODUCTIVE_KEYWORDS_PT = {
     "feliz", "natal", "ano", "boas", "fest",
     "parabén", "congratul",
     "saud", "obrig", "agradec", "valeu",
@@ -40,7 +40,7 @@ UNPRODUCTIVE_KEYWORDS_PT_STEM = {
     "felicidad", "abraç", "att", "cordial"
 }
 
-PRODUCTIVE_KEYWORDS_EN_STEM = {
+PRODUCTIVE_KEYWORDS_EN = {
     "request", "requir", "need",
     "issu", "error", "bug", "failur", "problem",
     "support", "help", "assist", "ticket",
@@ -50,7 +50,7 @@ PRODUCTIVE_KEYWORDS_EN_STEM = {
     "question", "doubt", "inquir", "clarif"
 }
 
-UNPRODUCTIVE_KEYWORDS_EN_STEM = {
+UNPRODUCTIVE_KEYWORDS_EN = {
     "happi", "birth", "new", "year", "christma", "season", "greet",
     "congratul", "congrats",
     "thank", "appreci", "grate",
