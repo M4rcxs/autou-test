@@ -1,94 +1,102 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="dark">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>AutoU - Email Classifier (MVP)</title>
-  <style>
-    body{font-family:Inter,system-ui,Arial; max-width:900px;margin:32px auto;padding:0 16px;color:#111}
-    header{display:flex;align-items:center;gap:12px}
-    h1{margin:0}
-    .card{border:1px solid #eee;padding:18px;border-radius:12px;margin-top:18px;box-shadow:0 6px 18px rgba(18,18,18,0.03)}
-    textarea{width:100%;height:160px;padding:10px;border-radius:8px;border:1px solid #ddd;font-size:14px}
-    input[type=file]{display:block;margin-top:8px}
-    button{background:#0066FF;color:#fff;padding:10px 14px;border-radius:8px;border:0;font-weight:600;cursor:pointer}
-    .result{margin-top:12px;padding:12px;border-radius:8px;background:#f9faff;border:1px solid #e6f0ff}
-    .meta{font-size:13px;color:#666;margin-top:6px}
-  </style>
+  <title>AutoU - Email Classifier</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-<header>
-  <h1>AutoU — Classificador de Emails (MVP)</h1>
-</header>
+<body class="bg-gray-950 text-gray-100 min-h-screen flex flex-col items-center px-4 py-10">
 
-<div class="card">
-  <label><strong>Colar texto do email</strong></label>
-  <textarea id="emailText" placeholder="Cole o conteúdo do email aqui..."></textarea>
+  <header class="flex items-center gap-3 mb-10">
+    <div class="bg-blue-600 text-white font-bold px-3 py-2 rounded-xl shadow-lg">AutoU</div>
+    <h1 class="text-2xl md:text-3xl font-semibold">Classificador de Emails</h1>
+  </header>
 
-  <div style="margin-top:8px">
-    <label><strong>Ou enviar arquivo (.pdf / .txt)</strong></label>
-    <input id="fileInput" type="file" accept=".pdf,.txt" />
-  </div>
-
-  <div style="margin-top:12px">
-    <button id="submitBtn">Analisar email</button>
-  </div>
-
-  <div id="loading" class="meta" style="display:none">Processando…</div>
-
-  <div id="output" style="display:none" class="result">
-    <div><strong>Categoria:</strong> <span id="category"></span></div>
-    <div class="meta"><strong>Confiança:</strong> <span id="confidence"></span></div>
-    <hr />
-    <div><strong>Resposta sugerida:</strong></div>
-    <div style="margin-top:8px"><textarea id="reply" style="height:140px"></textarea></div>
-    <div style="margin-top:8px">
-      <button id="copyBtn">Copiar resposta</button>
+  <div class="w-full max-w-2xl bg-gray-900 border border-gray-800 rounded-2xl shadow-xl p-6 space-y-6">
+    
+    <div>
+      <label class="block font-medium mb-2">📩 Colar texto do email</label>
+      <textarea id="emailText" placeholder="Cole o conteúdo do email aqui..." 
+        class="w-full h-40 p-3 rounded-xl border border-gray-700 bg-gray-800 text-gray-100 placeholder-gray-400 focus:ring-2 focus:ring-blue-600 focus:outline-none text-sm"></textarea>
     </div>
+
+    <div>
+      <label class="block font-medium mb-2">📎 Ou enviar arquivo (.pdf / .txt)</label>
+      <input id="fileInput" type="file" accept=".pdf,.txt"
+        class="block w-full text-sm text-gray-300 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer" />
+    </div>
+
+    <div>
+      <button id="submitBtn" 
+        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl shadow-md transition">
+        🔍 Analisar email
+      </button>
+    </div>
+
+    <div id="loading" class="text-sm text-gray-400 hidden">Processando…</div>
+
+    <div id="output" class="hidden bg-gray-800 border border-gray-700 rounded-xl p-5 space-y-4">
+      <div class="flex justify-between items-center">
+        <div><span class="font-semibold">Categoria:</span> <span id="category" class="text-blue-400"></span></div>
+        <div class="text-sm text-gray-400"><span class="font-semibold">Confiança:</span> <span id="confidence"></span></div>
+      </div>
+      <hr class="border-gray-700" />
+      <div>
+        <div class="font-semibold mb-2">Resposta sugerida:</div>
+        <textarea id="reply" class="w-full h-36 p-3 rounded-xl border border-gray-700 bg-gray-900 text-gray-100 placeholder-gray-400 text-sm"></textarea>
+      </div>
+      <div>
+        <button id="copyBtn" 
+          class="bg-gray-700 hover:bg-gray-600 text-gray-200 py-2 px-4 rounded-lg text-sm transition">
+          Copiar resposta
+        </button>
+      </div>
+    </div>
+
   </div>
-</div>
 
-<script>
-const submitBtn = document.getElementById('submitBtn');
-const fileInput = document.getElementById('fileInput');
-const emailText = document.getElementById('emailText');
-const loading = document.getElementById('loading');
-const output = document.getElementById('output');
-const categoryEl = document.getElementById('category');
-const confidenceEl = document.getElementById('confidence');
-const replyEl = document.getElementById('reply');
-const copyBtn = document.getElementById('copyBtn');
+  <script>
+  const submitBtn = document.getElementById('submitBtn');
+  const fileInput = document.getElementById('fileInput');
+  const emailText = document.getElementById('emailText');
+  const loading = document.getElementById('loading');
+  const output = document.getElementById('output');
+  const categoryEl = document.getElementById('category');
+  const confidenceEl = document.getElementById('confidence');
+  const replyEl = document.getElementById('reply');
+  const copyBtn = document.getElementById('copyBtn');
 
-submitBtn.addEventListener('click', async () => {
-  loading.style.display = 'block';
-  output.style.display = 'none';
+  submitBtn.addEventListener('click', async () => {
+    loading.style.display = 'block';
+    output.style.display = 'none';
 
-  const form = new FormData();
-  const text = emailText.value.trim();
-  if (text) form.append('email_text', text);
-  if (fileInput.files.length > 0) form.append('file', fileInput.files[0]);
+    const form = new FormData();
+    const text = emailText.value.trim();
+    if (text) form.append('email_text', text);
+    if (fileInput.files.length > 0) form.append('file', fileInput.files[0]);
 
-  try {
-    const res = await fetch('https://autou-test.onrender.com/analyze', { method: 'POST', body: form });
-    if (!res.ok) throw new Error('Erro na requisição');
-    const data = await res.json();
-    categoryEl.innerText = data.category;
-    confidenceEl.innerText = (data.confidence || 0).toFixed(2);
-    replyEl.value = data.suggested_reply || '';
-    output.style.display = 'block';
-  } catch (err) {
-    alert('Erro: ' + err.message);
-  } finally {
-    loading.style.display = 'none';
-  }
-});
+    try {
+      const res = await fetch('https://autou-test.onrender.com/analyze', { method: 'POST', body: form });
+      if (!res.ok) throw new Error('Erro na requisição');
+      const data = await res.json();
+      categoryEl.innerText = data.category;
+      confidenceEl.innerText = (data.confidence || 0).toFixed(2);
+      replyEl.value = data.suggested_reply || '';
+      output.style.display = 'block';
+    } catch (err) {
+      alert('Erro: ' + err.message);
+    } finally {
+      loading.style.display = 'none';
+    }
+  });
 
-copyBtn.addEventListener('click', () => {
-  replyEl.select();
-  document.execCommand('copy');
-  copyBtn.innerText = 'Copiado!';
-  setTimeout(()=> copyBtn.innerText='Copiar resposta', 1200);
-});
-</script>
+  copyBtn.addEventListener('click', () => {
+    replyEl.select();
+    document.execCommand('copy');
+    copyBtn.innerText = 'Copiado!';
+    setTimeout(()=> copyBtn.innerText='Copiar resposta', 1200);
+  });
+  </script>
 </body>
 </html>
