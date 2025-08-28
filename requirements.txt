@@ -1,6 +1,6 @@
-Flask
+flask
 flask-cors
 PyPDF2
 nltk
-gunicorn
-transformers
+torch==2.2.0
+transformers==5.4.0
